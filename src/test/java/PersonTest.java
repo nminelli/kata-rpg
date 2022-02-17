@@ -69,7 +69,7 @@ public class PersonTest {
         Person person = new Person();
         int health = person.getHealth();
         person.receiveDamage(1);
-        person.receiveLife(1);
+        person.heal(1);
 
         assertEquals(health, person.getHealth());
     }
@@ -79,7 +79,7 @@ public class PersonTest {
         Person person = new Person();
         person.setHealth(0);
 
-        person.receiveLife(1);
+        person.heal(1);
 
         assertEquals(0, person.getHealth());
     }
@@ -88,7 +88,7 @@ public class PersonTest {
     public void testHealthCantBeHigherThan1000() {
         Person person = new Person();
 
-        person.receiveLife(1);
+        person.heal(1);
 
         assertEquals(1000, person.getHealth());
     }
@@ -98,12 +98,12 @@ public class PersonTest {
         Person person = new Person();
 
         person.receiveDamage(2);
-        person.receiveLife(10);
+        person.heal(10);
 
         assertEquals(1000, person.getHealth());
     }
 
-    @Test
+    /*@Test
     public void testHealthAnotherPerson() {
         Person peter = new Person();
         Person nico = new Person();
@@ -113,6 +113,39 @@ public class PersonTest {
         peter.heal(nico, 43);
 
         assertEquals(1000, nico.getHealth());
+    }*/
+
+    @Test
+    public void testAtackSomeoneFiveLevelsAbove() {
+        Person characterAmateur = new Person();
+        Person characterCrackAndProfeesional = new Person();
+
+        characterCrackAndProfeesional.setLevel(6);
+
+        characterAmateur.attack(characterCrackAndProfeesional, 50);
+
+        assertEquals(975, characterCrackAndProfeesional.getHealth());
     }
 
+    @Test
+    public void testAtackSomeoneFiveLevelsBellow() {
+        Person characterAmateur = new Person();
+        Person characterCrackAndProfeesional = new Person();
+
+        characterCrackAndProfeesional.setLevel(6);
+
+        characterCrackAndProfeesional.attack(characterAmateur, 25);
+
+        assertEquals(962, characterAmateur.getHealth());
+    }
+
+    @Test
+    public void testCannotDealDamageToItself() {
+        Person peter = new Person();
+        int expectedHealth = peter.getHealth();
+
+        peter.attack(peter, 50);
+
+        assertEquals(expectedHealth, peter.getHealth());
+    }
 }

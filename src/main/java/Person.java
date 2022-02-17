@@ -16,9 +16,11 @@ public class Person {
         return this.health;
     }
 
-    public int getLevel() {
-        return this.level;
-    }
+    public void setLevel(int level) { this.level = level; }
+
+    public int getLevel() { return this.level; }
+
+    public void increasseLevel() {this.level++;}
 
     public boolean isAlive() {
         return this.getHealth() > 0;
@@ -33,10 +35,27 @@ public class Person {
     }
 
     public void attack(Person person, int damage) {
-        person.receiveDamage(damage);
+        if (person != this) {
+            damage = calculateDamage(person.getLevel(), damage);
+            person.receiveDamage(damage);
+        }
     }
 
-    public void receiveLife(int i) {
+    public int calculateDamage(int anotherCharacterlevel, int damage){
+        int dif = anotherCharacterlevel - this.level;
+
+        if (dif >= 5){
+            return (int) Math.round(damage * 0.5);
+        }
+
+        if (dif <= -5) {
+            return (int) Math.round(damage * 1.5);
+        }
+
+        return damage;
+    }
+
+    public void heal(int i) {
         if(this.isAlive()) {
             if ((this.getHealth() + i) >= 1000) {
                 setHealth(1000);
@@ -45,9 +64,5 @@ public class Person {
             }
         }
 
-    }
-
-    public void heal(Person person, int i) {
-        person.receiveLife(i);
     }
 }
