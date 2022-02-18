@@ -7,8 +7,7 @@ public class PersonTest {
     @Test
     public void testHealthStartsAt1000() {
         Person person = new Person();
-
-        assertEquals(1000, person.getHealth());
+        assertEquals(1000, person.getHealth(), 0);
     }
 
     @Test
@@ -28,17 +27,17 @@ public class PersonTest {
     @Test
     public void testReceivedDamage() {
         Person person = new Person();
-        int health = person.getHealth();
+        double health = person.getHealth();
         person.receiveDamage(1);
-        assertEquals(health - 1, person.getHealth());
+        assertEquals(health - 1, person.getHealth(), -1);
     }
 
     @Test
     public void testHealthCantBeLesserThan0() {
         Person person = new Person();
-        int health = person.getHealth();
+        double health = person.getHealth();
         person.receiveDamage(health + 1);
-        assertEquals(0, person.getHealth());
+        assertEquals(0, person.getHealth(), -1000);
     }
 
     @Test
@@ -46,11 +45,11 @@ public class PersonTest {
         Person henrique = new Person();
         Person pedro = new Person();
 
-        int healthHenrique = henrique.getHealth();
+        double healthHenrique = henrique.getHealth();
 
         pedro.attack(henrique, 1);
 
-        assertEquals(healthHenrique - 1, henrique.getHealth());
+        assertEquals(healthHenrique - 1, henrique.getHealth(), -1);
     }
 
     @Test
@@ -61,17 +60,17 @@ public class PersonTest {
         pedro.attack(henrique, 1000);
 
         assertFalse(henrique.isAlive());
-        assertEquals(0, henrique.getHealth());
+        assertEquals(0, henrique.getHealth(), -1000);
     }
 
     @Test
     public void testReceiveLife() {
         Person person = new Person();
-        int health = person.getHealth();
+        double health = person.getHealth();
         person.receiveDamage(1);
         person.receiveLife(1);
 
-        assertEquals(health, person.getHealth());
+        assertEquals(health, person.getHealth(), 1);
     }
 
     @Test
@@ -81,7 +80,7 @@ public class PersonTest {
 
         person.receiveLife(1);
 
-        assertEquals(0, person.getHealth());
+        assertEquals(0, person.getHealth(), 0);
     }
 
     @Test
@@ -90,7 +89,7 @@ public class PersonTest {
 
         person.receiveLife(1);
 
-        assertEquals(1000, person.getHealth());
+        assertEquals(1000, person.getHealth(), 0);
     }
 
     @Test
@@ -100,19 +99,55 @@ public class PersonTest {
         person.receiveDamage(2);
         person.receiveLife(10);
 
-        assertEquals(1000, person.getHealth());
+        assertEquals(1000, person.getHealth(), 0);
+    }
+    @Test
+    public void testDamageSamePerson() {
+        Person nico = new Person();
+
+        nico.attack(nico,43);
+
+        assertEquals(1000, nico.getHealth(), 0);
     }
 
     @Test
-    public void testHealthAnotherPerson() {
-        Person peter = new Person();
+    public void testHealSamePerson() {
+        //nico se cura a si mismo
         Person nico = new Person();
 
-        nico.receiveDamage(43);
+        nico.setHealth(100);
+        nico.heal(nico,43);
 
-        peter.heal(nico, 43);
+        assertEquals(143, nico.getHealth(), 0);
 
-        assertEquals(1000, nico.getHealth());
+        //nico no puede curar a otros
+        Person peter = new Person();
+        peter.setHealth(100);
+        nico.heal(peter,43);
+
+        assertEquals(100, peter.getHealth(), 0);
+
+
+    }
+
+    @Test
+    public void testDamageLowerLvl() {
+        Person peter = new Person();
+        peter.setLevel(6);
+        Person nico = new Person();
+
+        nico.attack(peter,50);
+        assertEquals(975, peter.getHealth(), 0);
+    }
+
+    @Test
+    public void testDamageUpperLvl() {
+        Person peter = new Person();
+        peter.setLevel(6);
+        Person nico = new Person();
+
+        peter.attack(nico,50);
+        assertEquals(925, nico.getHealth(), 0);
     }
 
 }

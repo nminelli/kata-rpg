@@ -1,6 +1,6 @@
 public class Person {
 
-    private int health;
+    private double health;
     private int level;
 
     Person() {
@@ -8,11 +8,14 @@ public class Person {
         this.level = 1;
     }
 
-    public void setHealth(int health) {
+    public void setHealth(double health) {
         this.health = health;
     }
+    public void setLevel(int lvl) {
+        this.level = lvl;
+    }
 
-    public int getHealth() {
+    public double getHealth() {
         return this.health;
     }
 
@@ -24,7 +27,7 @@ public class Person {
         return this.getHealth() > 0;
     }
 
-    public void receiveDamage(int damage) {
+    public void receiveDamage(double damage) {
         if (this.getHealth() < damage) {
             this.setHealth(0);
         } else {
@@ -32,8 +35,20 @@ public class Person {
         }
     }
 
-    public void attack(Person person, int damage) {
-        person.receiveDamage(damage);
+    public void attack(Person victim, double damage) {
+        if (!this.equals(victim)) {
+            int lvlVictim = victim.getLevel();
+            int lvlAttacker = this.getLevel();
+            int diffLvl = lvlVictim - lvlAttacker;
+            double damageModifier = 1;
+            if (diffLvl >= 5) {
+                damageModifier *= 0.5;
+            } else if (diffLvl <= -5) {
+                damageModifier *= 1.5;
+            }
+
+            victim.receiveDamage(damage * damageModifier);
+        }
     }
 
     public void receiveLife(int i) {
@@ -48,6 +63,8 @@ public class Person {
     }
 
     public void heal(Person person, int i) {
-        person.receiveLife(i);
+        if (this.equals(person)) {
+            person.receiveLife(i);
+        }
     }
 }
