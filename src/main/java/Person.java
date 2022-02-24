@@ -1,7 +1,8 @@
-public class Person {
+public abstract class Person {
 
     private int health;
     private int level;
+    private int position;
 
     private static int DIF_LEVEL = 5;
     private static int DIV_DAMAGE = 2;
@@ -10,6 +11,16 @@ public class Person {
     Person() {
         this.health = 1000;
         this.level = 1;
+        this.position = 0;
+    }
+
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public int getPosition() {
+        return this.position;
     }
 
     public void setHealth(int health) {
@@ -44,10 +55,12 @@ public class Person {
 
         if (defender == this) return;
 
-        if (calculateDifLevel(defender) > DIF_LEVEL) {
-            damage = damage / DIV_DAMAGE;
-        } else if (calculateDifLevel(defender) <= DIF_LEVEL ) {
+        if (this.getLevel() > defender.getLevel() && calculateDifLevel(defender) >= DIF_LEVEL) {
             damage = damage + (damage / DIV_DAMAGE);
+        }
+
+        if (this.getLevel() < defender.getLevel() && calculateDifLevel(defender) >= DIF_LEVEL ) {
+            damage = damage / DIV_DAMAGE;
         }
 
         defender.receiveDamage(damage);
@@ -72,6 +85,8 @@ public class Person {
     }
 
     private int calculateDifLevel(Person target) {
-        return this.getLevel() - target.getLevel();
+        return Math.abs(this.getLevel() - target.getLevel());
     }
+
+    public abstract int getRange();
 }
