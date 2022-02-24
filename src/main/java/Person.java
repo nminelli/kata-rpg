@@ -1,16 +1,21 @@
-public class Person {
+public abstract class Person {
 
     private double health;
     private int level;
+    private Position position;
+    protected double maxRange;
 
     Person() {
         this.health = 1000;
         this.level = 1;
+        this.position = new Position(0, 0);
+        this.maxRange = 1;
     }
 
     public void setHealth(double health) {
         this.health = health;
     }
+
     public void setLevel(int lvl) {
         this.level = lvl;
     }
@@ -36,7 +41,9 @@ public class Person {
     }
 
     public void attack(Person victim, double damage) {
-        if (!this.equals(victim)) {
+        Double distance = Position.calculateDistance(this.getPosition(), victim.getPosition());
+
+        if (!this.equals(victim) && distance <= this.getMaxRange()) {
             int lvlVictim = victim.getLevel();
             int lvlAttacker = this.getLevel();
             int diffLvl = lvlVictim - lvlAttacker;
@@ -52,11 +59,11 @@ public class Person {
     }
 
     public void receiveLife(int i) {
-        if(this.isAlive()) {
+        if (this.isAlive()) {
             if ((this.getHealth() + i) >= 1000) {
                 setHealth(1000);
             } else {
-                setHealth(getHealth()+i);
+                setHealth(getHealth() + i);
             }
         }
 
@@ -67,4 +74,18 @@ public class Person {
             person.receiveLife(i);
         }
     }
+
+    public Position getPosition() {
+        return this.position;
+    }
+
+    public double getMaxRange() {
+        return this.maxRange;
+    }
+
+    public void setPosition(Position newPosition) {
+        this.position = newPosition;
+    }
+
+
 }

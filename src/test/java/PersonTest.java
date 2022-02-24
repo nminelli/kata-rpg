@@ -6,27 +6,27 @@ public class PersonTest {
 
     @Test
     public void testHealthStartsAt1000() {
-        Person person = new Person();
+        Person person = new Melee();
         assertEquals(1000, person.getHealth(), 0);
     }
 
     @Test
     public void testLevelStartingAt1() {
-        Person person = new Person();
+        Person person = new Ranged();
 
         assertEquals(1, person.getLevel());
     }
 
     @Test
     public void testStartingItsAlive() {
-        Person person = new Person();
+        Person person = new Ranged();
 
         assertTrue(person.isAlive());
     }
 
     @Test
     public void testReceivedDamage() {
-        Person person = new Person();
+        Person person = new Melee();
         double health = person.getHealth();
         person.receiveDamage(1);
         assertEquals(health - 1, person.getHealth(), -1);
@@ -34,7 +34,7 @@ public class PersonTest {
 
     @Test
     public void testHealthCantBeLesserThan0() {
-        Person person = new Person();
+        Person person = new Ranged();
         double health = person.getHealth();
         person.receiveDamage(health + 1);
         assertEquals(0, person.getHealth(), -1000);
@@ -42,8 +42,8 @@ public class PersonTest {
 
     @Test
     public void testReceiveDamageAnotherPerson() {
-        Person henrique = new Person();
-        Person pedro = new Person();
+        Person henrique = new Melee();
+        Person pedro = new Melee();
 
         double healthHenrique = henrique.getHealth();
 
@@ -54,8 +54,8 @@ public class PersonTest {
 
     @Test
     public void testDamageKill() {
-        Person henrique = new Person();
-        Person pedro = new Person();
+        Person henrique = new Ranged();
+        Person pedro = new Melee();
 
         pedro.attack(henrique, 1000);
 
@@ -65,7 +65,7 @@ public class PersonTest {
 
     @Test
     public void testReceiveLife() {
-        Person person = new Person();
+        Person person = new Ranged();
         double health = person.getHealth();
         person.receiveDamage(1);
         person.receiveLife(1);
@@ -75,7 +75,7 @@ public class PersonTest {
 
     @Test
     public void testDeadCantBeHealed() {
-        Person person = new Person();
+        Person person = new Ranged();
         person.setHealth(0);
 
         person.receiveLife(1);
@@ -85,7 +85,7 @@ public class PersonTest {
 
     @Test
     public void testHealthCantBeHigherThan1000() {
-        Person person = new Person();
+        Person person = new Ranged();
 
         person.receiveLife(1);
 
@@ -94,18 +94,19 @@ public class PersonTest {
 
     @Test
     public void testPersonHealthCantBeHealedMoreThan1000() {
-        Person person = new Person();
+        Person person = new Ranged();
 
         person.receiveDamage(2);
         person.receiveLife(10);
 
         assertEquals(1000, person.getHealth(), 0);
     }
+
     @Test
     public void testDamageSamePerson() {
-        Person nico = new Person();
+        Person nico = new Ranged();
 
-        nico.attack(nico,43);
+        nico.attack(nico, 43);
 
         assertEquals(1000, nico.getHealth(), 0);
     }
@@ -113,17 +114,17 @@ public class PersonTest {
     @Test
     public void testHealSamePerson() {
         //nico se cura a si mismo
-        Person nico = new Person();
+        Person nico = new Melee();
 
         nico.setHealth(100);
-        nico.heal(nico,43);
+        nico.heal(nico, 43);
 
         assertEquals(143, nico.getHealth(), 0);
 
         //nico no puede curar a otros
-        Person peter = new Person();
+        Person peter = new Ranged();
         peter.setHealth(100);
-        nico.heal(peter,43);
+        nico.heal(peter, 43);
 
         assertEquals(100, peter.getHealth(), 0);
 
@@ -132,22 +133,69 @@ public class PersonTest {
 
     @Test
     public void testDamageLowerLvl() {
-        Person peter = new Person();
+        Person peter = new Melee();
         peter.setLevel(6);
-        Person nico = new Person();
+        Person nico = new Melee();
 
-        nico.attack(peter,50);
+        nico.attack(peter, 50);
         assertEquals(975, peter.getHealth(), 0);
     }
 
     @Test
     public void testDamageUpperLvl() {
-        Person peter = new Person();
+        Person peter = new Melee();
         peter.setLevel(6);
-        Person nico = new Person();
+        Person nico = new Ranged();
 
-        peter.attack(nico,50);
+        peter.attack(nico, 50);
         assertEquals(925, nico.getHealth(), 0);
+    }
+
+    @Test
+    public void testPersonHasInitialPosition00() {
+        Person person = new Melee();
+        Position positionInitital = new Position(0, 0);
+        Position position = person.getPosition();
+        assertTrue(positionInitital.equals(position));
+    }
+
+    @Test
+    public void testPersonHasMaxRange() {
+        Person person = new Melee();
+        double maxRange = person.getMaxRange();
+        assertTrue(maxRange > 0);
+    }
+
+    @Test
+    public void testGetDistance() {
+        Position pos1 = new Position(0, 0);
+        Position pos2 = new Position(1, 0);
+
+        double distance = Position.calculateDistance(pos1, pos2);
+
+        assertEquals(1, distance, 0);
+    }
+
+    @Test
+    public void testAttackInRange() {
+        Person gonza = new Ranged();
+        Person mati = new Melee();
+        mati.setPosition(new Position(20, 0));
+        double matiHealth = mati.getHealth();
+        gonza.attack(mati, 20);
+
+        assertEquals(matiHealth, mati.getHealth(), 20);
+    }
+
+    @Test
+    public void testAttackOutOfRange() {
+        Person gonza = new Ranged();
+        Person mati = new Melee();
+        mati.setPosition(new Position(21, 0));
+        double matiHealth = mati.getHealth();
+        gonza.attack(mati, 20);
+
+        assertEquals(matiHealth, mati.getHealth(), 0);
     }
 
 }
